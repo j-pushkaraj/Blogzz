@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Results for "{{ query }}"</h2>
+    
+    {% if posts %}
+        <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+            {% for post in posts %}
+            <div class="col">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content|truncate(200) }}</p>
+                        <a href="{{ url_for('post', post_id=post.id) }}" 
+                           class="btn btn-primary">Read More</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Posted by {{ post.author.username }} 
+                        on {{ post.date_posted.strftime('%Y-%m-%d') }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4" role="alert">
+            No posts found matching your search criteria.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

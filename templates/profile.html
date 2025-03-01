@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='avatars/' + user.image_file) }}" 
+                         class="rounded-circle mb-3" 
+                         width="200" 
+                         height="200"
+                         alt="{{ user.username }}'s avatar">
+                    <h2 class="mb-1">{{ user.username }}</h2>
+                    <p class="text-muted mb-4">{{ user.email }}</p>
+                    
+                    <h4 class="mb-3">Change Avatar</h4>
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <div class="row g-2">
+                            {% for avatar in avatars %}
+                            <div class="col-4">
+                                <label class="avatar-option">
+                                    <input type="radio" 
+                                           name="avatar" 
+                                           value="{{ avatar }}" 
+                                           {% if user.image_file == avatar %}checked{% endif %}>
+                                    <img src="{{ url_for('static', filename='avatars/' + avatar) }}" 
+                                         class="img-fluid rounded-circle {% if user.image_file == avatar %}avatar-selected{% endif %}">
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Update Avatar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="mb-4">My Posts ({{ user.posts|length }})</h3>
+                    {% for post in user.posts %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">{{ post.title }}</h5>
+                                <small class="text-muted">{{ post.date_posted.strftime('%b %d, %Y') }}</small>
+                            </div>
+                            <p class="card-text">{{ post.content|truncate(200) }}</p>
+                            <a href="{{ url_for('post', post_id=post.id) }}" 
+                               class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        You haven't created any posts yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
