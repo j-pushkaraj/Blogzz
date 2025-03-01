@@ -46,7 +46,8 @@
                                         <input type="radio" name="avatar" value="{{ avatar }}" 
                                                {% if loop.first %}checked{% endif %}>
                                         <img src="{{ url_for('static', filename='avatars/' + avatar) }}" 
-                                             class="img-fluid rounded-circle">
+                                             alt="{{ avatar }}" 
+                                             class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
                                     </label>
                                 </div>
                                 {% endfor %}

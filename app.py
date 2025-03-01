@@ -84,7 +84,7 @@ class PostForm(FlaskForm):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/')
+
 @app.route('/home')
 def home():
     page = request.args.get('page', 1, type=int)
@@ -98,13 +98,16 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password,
-                    image_file=form.avatar.data)
+        user_avatar = form.avatar.data if form.avatar.data else app.config['DEFAULT_AVATAR']
+        user = User(username=form.username.data,
+                    email=form.email.data,
+                    password=hashed_password,
+                    image_file=user_avatar)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
+        flash('Your account has been created! You are now able to log in.', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title='Register', form=form, avatars=AVATARS)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -182,6 +185,11 @@ def user_posts(username):
         .order_by(Post.date_posted.desc())\
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', title='Profile')
 
 @app.errorhandler(404)
 def error_404(error):
